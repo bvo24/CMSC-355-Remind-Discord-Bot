@@ -17,12 +17,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import Bot.Bot;
 
-import javax.security.auth.login.LoginException;
-import javax.xml.soap.Text;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class commands extends ListenerAdapter {
@@ -35,11 +29,12 @@ public class commands extends ListenerAdapter {
         String command = event.getName();
         TextChannel channel = (TextChannel) event.getChannel();
 
-        if(command.equals("")){
-            //This is where we implement how we do what we want
+        if(command.equals("createreminder")){
+            //This is where we implement the logic for the command
 
         }
-        else if(command.equals("")){
+        else if(command.equals("reminderlist")){
+
 
         }
 
@@ -53,8 +48,8 @@ public class commands extends ListenerAdapter {
 
         List<CommandData> commandData = new ArrayList<>();
         //commandData.add(Commands.slash("remind", "Set a reminder"));
-        commandData.add(Commands.slash("command", "This is a command"));
-        commandData.add(Commands.slash("test", "This is a test"));
+        commandData.add(Commands.slash("createreminder", "Create a reminder given time"));
+        commandData.add(Commands.slash("reminderlist", "View your current reminders"));
         event.getGuild().updateCommands().addCommands(commandData).queue();
 
     }

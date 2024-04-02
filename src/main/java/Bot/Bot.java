@@ -23,10 +23,17 @@ public class Bot {
 
     public Bot() throws LoginException {
 
-        //Essentially this is how we get our bot to run, we get a token we generated
-        //Shards is basically how to get your bot on multiple servers
+        //This file, is how we create an instance of our bot
+        //Shards allow the bot to be able to be run on multiple servers
+
+        //This is from an API in the pom.xml file
+        //This makes it possible to upload onto github
+        //The token is important because if someone else has your token they can do anything with your bot
+        //But currently not implementing it because the .env can possibly be pushed on accident.
         //config = Dotenv.configure().load();
         //String token = config.get("TOKEN");
+
+
         String token = "";
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
 
@@ -34,11 +41,6 @@ public class Bot {
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setActivity(Activity.watching("the calendar"));
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES);
-
-        //Used for checking members statuses (Online, offline, etc..)
-        //builder.setMemberCachePolicy(MemberCachePolicy.ALL);
-        //builder.setChunkingFilter(ChunkingFilter.ALL);
-        //builder.enableCache(CacheFlag.ONLINE_STATUS);
 
         //Build our bot
         shardManager = builder.build();
