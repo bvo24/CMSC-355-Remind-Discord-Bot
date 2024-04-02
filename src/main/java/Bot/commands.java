@@ -49,7 +49,10 @@ public class commands extends ListenerAdapter {
                 event.reply("Invalid time for minutes must be at or below 60 minutes").queue();
             }
             else{
-                event.reply("Created a reminder").queue();
+                String str = String.format("Reminder created for you in %d days %d hours %d minutes for %s", days, hours, minutes, reminder);
+                //event.reply("Created a reminder in %d").queue();
+                event.reply(str).queue();
+
             }
 
 
