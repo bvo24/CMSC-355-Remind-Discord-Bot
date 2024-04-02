@@ -29,9 +29,36 @@ public class commands extends ListenerAdapter {
         String command = event.getName();
         TextChannel channel = (TextChannel) event.getChannel();
 
+
+
+
         if(command.equals("createreminder")){
+            OptionMapping arg1 = event.getOption("days");
+            OptionMapping arg2 = event.getOption("hours");
+            OptionMapping arg3 = event.getOption("minutes");
+            OptionMapping arg4 = event.getOption("description");
+
+            int days = arg1.getAsInt();
+            int hours = arg2.getAsInt();
+            int minutes = arg3.getAsInt();
+            String reminder = arg4.getAsString();
+            if(days < 0 || hours < 0 || minutes < 0){
+                event.reply("Cannot enter negative time").queue();
+            }
+            else if (minutes > 60){
+                event.reply("Invalid time for minutes must be at or below 60 minutes").queue();
+            }
+            else{
+                event.reply("Created a reminder").queue();
+            }
+
+
             //This is where we implement the logic for the command
-            event.reply("Created a reminder").queue();
+
+
+
+
+
 
         }
         else if(command.equals("reminderlist")){
