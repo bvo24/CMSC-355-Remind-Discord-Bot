@@ -27,13 +27,13 @@ public class Bot {
         //Shards allow the bot to be able to be run on multiple servers
 
         //This is from an API in the pom.xml file
-        //This makes it possible to upload onto github
+        //This makes it possible to upload onto github, by reading a .env file that noone else has access to
         //The token is important because if someone else has your token they can do anything with your bot
         //But currently not implementing it because the .env can possibly be pushed on accident.
         //config = Dotenv.configure().load();
         //String token = config.get("TOKEN");
 
-
+        //Currently just removing and adding token before pushing
         String token = "";
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
 
