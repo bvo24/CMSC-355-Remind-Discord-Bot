@@ -33,6 +33,8 @@ public class commands extends ListenerAdapter {
 
 
         if(command.equals("createreminder")){
+
+            //Breaks down the arguments for this command
             OptionMapping arg1 = event.getOption("days");
             OptionMapping arg2 = event.getOption("hours");
             OptionMapping arg3 = event.getOption("minutes");
@@ -42,6 +44,8 @@ public class commands extends ListenerAdapter {
             int hours = arg2.getAsInt();
             int minutes = arg3.getAsInt();
             String reminder = arg4.getAsString();
+
+            //Test cases
             if(days < 0 || hours < 0 || minutes < 0){
                 event.reply("Cannot enter negative time").queue();
             }
