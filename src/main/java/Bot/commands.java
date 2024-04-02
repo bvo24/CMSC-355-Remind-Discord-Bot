@@ -31,10 +31,11 @@ public class commands extends ListenerAdapter {
 
         if(command.equals("createreminder")){
             //This is where we implement the logic for the command
+            event.reply("Created a reminder").queue();
 
         }
         else if(command.equals("reminderlist")){
-
+            event.reply("Here are your reminders").queue();
 
         }
 
@@ -48,7 +49,7 @@ public class commands extends ListenerAdapter {
 
         List<CommandData> commandData = new ArrayList<>();
         //commandData.add(Commands.slash("remind", "Set a reminder"));
-        commandData.add(Commands.slash("createreminder", "Create a reminder given time"));
+        commandData.add(Commands.slash("createreminder", "Create a reminder in...").addOptions(new OptionData(OptionType.INTEGER, "days", "How many days from now?", true ), new OptionData(OptionType.INTEGER, "hours", "How many hours from now?", true ), new OptionData(OptionType.INTEGER, "minutes", "How many minutes from now?", true ), new OptionData(OptionType.STRING, "description", "What do you want to be reminded of", true )));
         commandData.add(Commands.slash("reminderlist", "View your current reminders"));
         event.getGuild().updateCommands().addCommands(commandData).queue();
 

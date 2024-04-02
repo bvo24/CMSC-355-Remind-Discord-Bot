@@ -39,7 +39,7 @@ public class Bot {
 
         //Bot information: Online status/activity and what we allow the bot to see in our server
         builder.setStatus(OnlineStatus.ONLINE);
-        builder.setActivity(Activity.watching("the calendar"));
+        builder.setActivity(Activity.watching("your reminders"));
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES);
 
         //Build our bot
