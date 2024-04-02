@@ -65,7 +65,7 @@ public class commands extends ListenerAdapter {
 
         }
         else if(command.equals("reminderlist")){
-            event.reply("Here are your reminders").queue();
+            event.reply("Here are your reminders:").queue();
 
         }
 
