@@ -42,7 +42,7 @@ public class commands extends ListenerAdapter {
 
     }
 
-    //Instant update make sure Bot.commands are lower case
+    //How we make the commands show up
     @Override
     public void onGuildReady(GuildReadyEvent event) {
 
