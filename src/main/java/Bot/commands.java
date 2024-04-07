@@ -20,6 +20,20 @@ import Bot.Bot;
 import java.util.*;
 
 public class commands extends ListenerAdapter {
+    /**
+     *
+     * Ok so currently how we're going to implement this is with a hashmap.
+     * <Key,Value> Key is the userid and value should be a list of their reminders(which should be a class there's a lot of data in the reminder)
+     *
+     *
+     *
+     * @param event
+     */
+
+
+
+
+
 
 
     @Override
@@ -40,6 +54,8 @@ public class commands extends ListenerAdapter {
             OptionMapping arg3 = event.getOption("minutes");
             OptionMapping arg4 = event.getOption("description");
 
+
+            String user = event.getUser().toString();
             int days = arg1.getAsInt();
             int hours = arg2.getAsInt();
             int minutes = arg3.getAsInt();
@@ -52,9 +68,28 @@ public class commands extends ListenerAdapter {
             else if (minutes > 60){
                 event.reply("Invalid time for minutes must be at or below 60 minutes").queue();
             }
+
+
             else{
                 String str = String.format("Reminder created for you in %d days %d hours %d minutes for %s", days, hours, minutes, reminder);
                 //event.reply("Created a reminder in %d").queue();
+
+                //When creating a reminder we should convert our time to millis
+
+                //Then we should create a reminder class. It should have the user's reminder, the user and their hash map.
+                //We need their hashmap so that when the timer is done we remove it from their list. That's why it's in the remindertask
+
+                //Once we create a instance we should get their hashmap and their list and add this reminder
+                //And we can schedule this reminder too with a function already created.
+
+                //Example
+                //reminder task = new reminder( map, user, what their reminded)
+                //task.schedule( time in millis)
+
+
+
+
+
                 event.reply(str).queue();
 
             }
@@ -71,10 +106,50 @@ public class commands extends ListenerAdapter {
         else if(command.equals("reminderlist")){
             event.reply("Here are your reminders:").queue();
 
+            //this one is fairly simple
+            //we should get the users list and just iterate through
+
+
         }
 
 
     }
+
+    public class reminder extends TimerTask{
+        //Data we need to create a single reminder.
+        //private
+
+
+        //Instance of our bot
+        reminder(){
+            //this.user = user etc..
+
+        }
+
+
+        //run is a default thing when you extend timertask
+        //Basically the code here runs when the timer is done
+        @Override
+        public void run() {
+            //Currently we should keep it simple and just send a message in the chat
+
+            //Once complete the list still has the reminder. We have their hashmap and can get their list so
+
+
+
+        }
+
+        void setTimer(long timeMillis){
+            //Set's the timer
+            Timer time = new Timer();
+            time.schedule(this, timeMillis);
+
+        }
+
+
+    }
+
+
 
     //How we make the commands show up
     @Override
