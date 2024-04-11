@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import Bot.Bot;
 
+import javax.xml.soap.Text;
 import java.util.*;
 
 public class commands extends ListenerAdapter {
@@ -31,9 +32,11 @@ public class commands extends ListenerAdapter {
      */
 
 
+    private final HashMap<String, List<reminder>> map;
 
-
-
+    public commands() {
+        map = new HashMap<>();
+    }
 
 
     @Override
@@ -61,6 +64,7 @@ public class commands extends ListenerAdapter {
             int minutes = arg3.getAsInt();
             String reminder = arg4.getAsString();
 
+
             //Test cases
             if(days < 0 || hours < 0 || minutes < 0){
                 event.reply("Cannot enter negative time").queue();
@@ -75,12 +79,18 @@ public class commands extends ListenerAdapter {
                 //event.reply("Created a reminder in %d").queue();
 
                 //When creating a reminder we should convert our time to millis
+                long millisTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
 
-                //Then we should create a reminder class. It should have the user's reminder, the user and their hash map.
+                //Create an instance of our reminder class. It should have the user's reminder, the user and their hash map, and the channel the message was sent in
                 //We need their hashmap so that when the timer is done we remove it from their list. That's why it's in the remindertask
+                reminder remind = new reminder(reminder,map, user,channel);
 
                 //Once we create a instance we should get their hashmap and their list and add this reminder
                 //And we can schedule this reminder too with a function already created.
+                List<reminder> list = map.getOrDefault(user, new ArrayList<reminder>());
+                list.add(remind);
+                remind.setTimer(millisTime);
+
 
                 //Example
                 //reminder task = new reminder( map, user, what their reminded)
@@ -117,23 +127,34 @@ public class commands extends ListenerAdapter {
 
     public class reminder extends TimerTask{
         //Data we need to create a single reminder.
-        //private
+    private String reminder;
+    private String user;
+    private HashMap<String, List<reminder>> map;
+    private TextChannel channel;
 
 
         //Instance of our bot
-        reminder(){
+        reminder(String reminder, HashMap<String, List<reminder>> map, String user, TextChannel channel){
             //this.user = user etc..
+            this.reminder = reminder;
+            this.map = map;
+            this.user = user;
+            this.channel = channel;
+
 
         }
 
 
-        //run is a default thing when you extend timertask
+        //run is a default function when you extend timertask
         //Basically the code here runs when the timer is done
         @Override
         public void run() {
             //Currently we should keep it simple and just send a message in the chat
 
             //Once complete the list still has the reminder. We have their hashmap and can get their list so
+            channel.sendMessage("Here's your reminder for " + reminder).queue();
+            List<reminder> list = map.get(user);
+            list.remove(this);
 
 
 
