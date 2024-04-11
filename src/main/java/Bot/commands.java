@@ -46,9 +46,6 @@ public class commands extends ListenerAdapter {
         String command = event.getName();
         TextChannel channel = (TextChannel) event.getChannel();
 
-
-
-
         if(command.equals("createreminder")){
 
             //Breaks down the arguments for this command
@@ -89,6 +86,7 @@ public class commands extends ListenerAdapter {
                 //And we can schedule this reminder too with a function already created.
                 List<reminder> list = map.getOrDefault(user, new ArrayList<reminder>());
                 list.add(remind);
+                map.put(user, list);
                 remind.setTimer(millisTime);
 
 
@@ -113,13 +111,40 @@ public class commands extends ListenerAdapter {
 
 
         }
-        else if(command.equals("reminderlist")){
-            event.reply("Here are your reminders:").queue();
+        else if (command.equals("reminderlist")) {
+            String user = event.getUser().toString();
+            List<reminder> reminders = map.get(user);
 
-            //this one is fairly simple
-            //we should get the users list and just iterate through
+            if (reminders == null || reminders.isEmpty()) {
+                event.reply("You have no reminders set.").queue();
+            } else {
+                StringBuilder reminderList = new StringBuilder("Here are your reminders:\n"); // All reminders just get added to one big string
+                for (int i = 0; i < reminders.size(); i++) {
+                    reminder remind = reminders.get(i);
+                    long timeRemaining = remind.getScheduledTime() - System.currentTimeMillis();
+                    // This all just takes the remaining time in milliseconds and converts it back to day, hour, minute format
+                    long days = timeRemaining / (24 * 60 * 60 * 1000);
+                    timeRemaining %= (24 * 60 * 60 * 1000);
+                    long hours = timeRemaining / (60 * 60 * 1000);
+                    timeRemaining %= (60 * 60 * 1000);
+                    long minutes = timeRemaining / (60 * 1000);
+                    timeRemaining %= (60 * 1000);
+                    long seconds = timeRemaining / 1000;
 
+                    String timeString;
+                    // Also display seconds remaining if there is less than a minute left
+                    // That way it doesn't just show 0 days, 0 hours, 0 minutes when there are still some seconds left
+                    if (days == 0 && hours == 0 && minutes == 0) {
+                        timeString = String.format("%d days, %d hours, %d minutes, %d seconds", days, hours, minutes, seconds);
+                    } else {
+                        timeString = String.format("%d days, %d hours, %d minutes", days, hours, minutes);
+                    }
 
+                    reminderList.append(i + 1).append(". ").append(remind.getReminder()).append(" - ").append(timeString).append(" remaining\n");
+                }
+
+                event.reply(reminderList.toString()).queue();
+            }
         }
 
 
@@ -131,7 +156,7 @@ public class commands extends ListenerAdapter {
     private String user;
     private HashMap<String, List<reminder>> map;
     private TextChannel channel;
-
+    private long scheduledTime;
 
         //Instance of our bot
         reminder(String reminder, HashMap<String, List<reminder>> map, String user, TextChannel channel){
@@ -144,6 +169,13 @@ public class commands extends ListenerAdapter {
 
         }
 
+        public String getReminder() {
+            return reminder;
+        }
+
+        public long getScheduledTime() {
+            return scheduledTime;
+        }
 
         //run is a default function when you extend timertask
         //Basically the code here runs when the timer is done
@@ -162,6 +194,7 @@ public class commands extends ListenerAdapter {
 
         void setTimer(long timeMillis){
             //Set's the timer
+            scheduledTime = System.currentTimeMillis() + timeMillis; // makes it easier to display remaining time for reminder list
             Timer time = new Timer();
             time.schedule(this, timeMillis);
 
