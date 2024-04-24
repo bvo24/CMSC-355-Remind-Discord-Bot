@@ -29,6 +29,11 @@ public class commands extends ListenerAdapter {
      * Our data structure is a hashmap with a hashmap inside rather than just a list
      * Since we're accessing a hashmap reading our list is a little different
      * Our reminder class took in more arguments to help
+     *
+     * Things we added in this new sprint:
+     * made all command calls private (noone can see it besides the user calling it)
+     * Formatted our reminder list so that it looks better
+     * removereminder feature
      * @param event
      */
 
@@ -113,41 +118,11 @@ public class commands extends ListenerAdapter {
         }
         else if (command.equals("reminderlist")) {
 
-            //retrieve the user's hashtable of reminders
             String user = event.getUser().toString();
-            HashMap<Integer, reminder> reminders = map.get(user);
+            HashMap<Integer, reminder> innerMap = map.get(user);
 
-            if (reminders == null || reminders.isEmpty()) {
-                event.reply("You have no reminders set.").setEphemeral(true).queue();
-            } else {
-                StringBuilder reminderList = new StringBuilder("Here are your reminders:\n"); // All reminders just get added to one big string
-                //Since we're using a hashtable inside a hashtable now iterating it is slightly different
-                for(Map.Entry<Integer, reminder> entry : reminders.entrySet()){
-                    reminder remind = entry.getValue();
-
-                    long timeRemaining = remind.getScheduledTime() - System.currentTimeMillis();
-                    // This all just takes the remaining time in milliseconds and converts it back to day, hour, minute format
-                    long days = timeRemaining / (24 * 60 * 60 * 1000);
-                    timeRemaining %= (24 * 60 * 60 * 1000);
-                    long hours = timeRemaining / (60 * 60 * 1000);
-                    timeRemaining %= (60 * 60 * 1000);
-                    long minutes = timeRemaining / (60 * 1000);
-                    timeRemaining %= (60 * 1000);
-                    long seconds = timeRemaining / 1000;
-
-                    String timeString;
-                    // Also display seconds remaining if there is less than a minute left
-                    // That way it doesn't just show 0 days, 0 hours, 0 minutes when there are still some seconds left
-                    if (days == 0 && hours == 0 && minutes == 0) {
-                        timeString = String.format("%d days, %d hours, %d minutes, %d seconds", days, hours, minutes, seconds);
-                    } else {
-                        timeString = String.format("%d days, %d hours, %d minutes", days, hours, minutes);
-                    }
-                    //We append it all into one string since we can only have one reply.
-                    reminderList.append("ID: ").append(entry.getKey()).append(". ").append(remind.getReminder()).append(" - ").append(timeString).append(" remaining\n");
-                }
-                event.reply(reminderList.toString()).setEphemeral(true).queue();
-            }
+            EmbedBuilder embed = readReminders(user);
+            event.reply("Fetched your list!").setEphemeral(true).addEmbeds(embed.build()).queue();
 
         }
         else if(command.equals("removereminder")){
@@ -250,6 +225,51 @@ public class commands extends ListenerAdapter {
 
 
     }
+
+    //This is how we create our formatted message and use it in our case where we call our reminderlist
+    EmbedBuilder readReminders(String userId){
+        HashMap<Integer, reminder> list = map.get(userId);
+        EmbedBuilder embed = new EmbedBuilder();
+
+
+        //Checks the list if it's empty or not
+        if(list == null || list.size() == 0){
+            embed.setTitle("Reminders");
+            embed.setDescription("No reminders currently");
+            return embed;
+        }
+        //Starting to create our embed, providing a title then string concatenating
+        embed.setTitle("Reminders");
+        //Sets up description by having a loop read each reminder in the list then string builds it
+        StringBuilder strb = new StringBuilder();
+        for(Map.Entry<Integer, reminder> entry : list.entrySet()){
+            //Calculte the time for each reminder
+            long currentTimeMillis = System.currentTimeMillis();
+            long scheduledTimeMillis = entry.getValue().scheduledExecutionTime();
+            long timeRemainingMillis = scheduledTimeMillis - currentTimeMillis;
+            long millis = timeRemainingMillis;
+            long seconds = millis / 1000;
+            long minutes = seconds / 60;
+            long hours = minutes / 60;
+            long days = hours / 24;
+            hours %= 24;
+            minutes %= 60;
+            seconds %= 60;
+
+            //Once calculated we format it all into one line then append it for each reminder
+            String str = String.format("%d days %02d : %02d : %02d\n", days, hours, minutes, seconds);
+            strb.append(String.format("**ID:** %s **Reminder:** %s **Time:** %s",entry.getValue().reminderID, entry.getValue().reminder, str));
+
+
+
+        }
+        embed.setDescription(strb.toString());
+
+        return embed;
+
+
+    }
+
 
 
 

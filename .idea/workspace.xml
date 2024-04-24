@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34b4b3ba-b6ec-427b-bd2d-f7e8e8c1510e" name="Changes" comment="Changed data structure.&#10;HashMap&lt;user, list&gt;&#10;HashMap&lt;user, HashMap&lt;id, reminder&gt;&gt;&#10;Added a remove feature&#10;-messages are private&#10;-dmed message&#10;-cleaned up code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Bot/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Bot/Bot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Bot/commands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Bot/commands.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,7 +156,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713918925103</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Changed data structure.&#10;HashMap&lt;user, list&gt;&#10;HashMap&lt;user, HashMap&lt;id, reminder&gt;&gt;&#10;Added a remove feature&#10;-messages are private&#10;-dmed message&#10;-cleaned up code">
+      <created>1713919488178</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1713919488178</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
