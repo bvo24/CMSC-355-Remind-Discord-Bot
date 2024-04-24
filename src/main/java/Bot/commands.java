@@ -22,12 +22,13 @@ import java.util.*;
 
 public class commands extends ListenerAdapter {
     /**
-     *
-     * Ok so currently how we're going to implement this is with a hashmap.
-     * <Key,Value> Key is the userid and value should be a list of their reminders(which should be a class there's a lot of data in the reminder)
-     *
-     *
-     *
+     *With this new remove feature a notable flaw in our bot was found. If we wanted to remove a reminder we would have to type the entire string out which seems like a hassle
+     *So we implemeneted an ID that is generated when you create a reminder
+     *Though this seems like a simple fix it caused a lot of changes to the other functions too.
+     * Changing our user from a string to the type User
+     * Our data structure is a hashmap with a hashmap inside rather than just a list
+     * Since we're accessing a hashmap reading our list is a little different
+     * Our reminder class took in more arguments to help
      * @param event
      */
 
