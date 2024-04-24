@@ -55,7 +55,7 @@ public class commands extends ListenerAdapter {
             OptionMapping arg3 = event.getOption("minutes");
             OptionMapping arg4 = event.getOption("description");
 
-
+            //Turning them into a usable type
             //String user = event.getUser().toString();
             User user = event.getUser();
             int days = arg1.getAsInt();
@@ -65,77 +65,63 @@ public class commands extends ListenerAdapter {
 
 
             //Test cases
+            //Negative time
             if(days < 0 || hours < 0 || minutes < 0){
                 event.reply("Cannot enter negative time").setEphemeral(true).queue();
             }
+            //Providing a time larger than 60 minutes
             else if (minutes > 60){
                 event.reply("Invalid time for minutes must be at or below 60 minutes").setEphemeral(true).queue();
             }
 
-
+            //Otherwise we shoould create the reminder
             else{
                 String str = String.format("Reminder created for you in %d days %d hours %d minutes for %s", days, hours, minutes, reminder);
-                //event.reply("Created a reminder in %d").queue();
 
                 //When creating a reminder we should convert our time to millis
                 long millisTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
                 Timer timer = new Timer();
 
-                //Create an instance of our reminder class. It should have the user's reminder, the user and their hash map, and the channel the message was sent in
-                //We need their hashmap so that when the timer is done we remove it from their list. That's why it's in the remindertask
+                //Create an instance of our reminder class. It should have the user's reminder, the user and their hash map, and the channel the message was sent in, their id for the reminder and a timer
+                //Each element required in an instance so that it can be recalled and used when the timer is up
+                //For example
+                //User: when we want to privately message, the bot has a hard time remembering who. So when your timer is up for your reminder it looks at the user
+                //ID: Similar to user it makes it easier on the bot when your timer is up to remove it from the list
+
                 reminder remind = new reminder(reminder,map, user,channel, id, timer);
 
-                //Once we create a instance we should get their hashmap and their list and add this reminder
-                //And we can schedule this reminder too with a function already created.
-
-                //List<reminder> list = map.getOrDefault(user, new ArrayList<reminder>());
-                //list.add(remind);
-                //map.put(user, list);
+                //We should add this reminder to the user's reminders (key->value:  id , reminder) hashtable.
+                //Then add this updated list to their user unique id
 
                 HashMap<Integer, reminder> innerMap = map.getOrDefault(user.toString(), new HashMap<Integer, reminder>());
                 innerMap.put(id, remind);
                 map.put(user.toString(), innerMap);
-                System.out.println(id);
+                //Testing
+                // System.out.println(id);
+                //System.out.println("Size of your reminder list " + innerMap.size() );
+
+                //Update ID value so we always have a unique id and then start the timer
                 id++;
-
-                System.out.println("Size of your reminder list " + innerMap.size() );
-
                 remind.setTimer(millisTime);
 
-
-                //Example
-                //reminder task = new reminder( map, user, what their reminded)
-                //task.schedule( time in millis)
-
-
-
-
-
+                //Emphemeral allows us for only the user calling a function to see it
                 event.reply(str).setEphemeral(true).queue();
 
             }
 
-
-            //This is where we implement the logic for the command
-
-
-
-
-
-
         }
         else if (command.equals("reminderlist")) {
+
+            //retrieve the user's hashtable of reminders
             String user = event.getUser().toString();
-            //List<reminder> reminders = map.get(user);
             HashMap<Integer, reminder> reminders = map.get(user);
 
             if (reminders == null || reminders.isEmpty()) {
                 event.reply("You have no reminders set.").setEphemeral(true).queue();
             } else {
                 StringBuilder reminderList = new StringBuilder("Here are your reminders:\n"); // All reminders just get added to one big string
-                //for (int i = 0; i < reminders.size(); i++) {
+                //Since we're using a hashtable inside a hashtable now iterating it is slightly different
                 for(Map.Entry<Integer, reminder> entry : reminders.entrySet()){
-                    //reminder remind = reminders.get(i);
                     reminder remind = entry.getValue();
 
                     long timeRemaining = remind.getScheduledTime() - System.currentTimeMillis();
@@ -156,11 +142,9 @@ public class commands extends ListenerAdapter {
                     } else {
                         timeString = String.format("%d days, %d hours, %d minutes", days, hours, minutes);
                     }
-
+                    //We append it all into one string since we can only have one reply.
                     reminderList.append("ID: ").append(entry.getKey()).append(". ").append(remind.getReminder()).append(" - ").append(timeString).append(" remaining\n");
                 }
-
-
                 event.reply(reminderList.toString()).setEphemeral(true).queue();
             }
 
@@ -169,17 +153,27 @@ public class commands extends ListenerAdapter {
 
             String user = event.getUser().toString();
 
+
+            //Takes the first argument in the command and turns it into an int
             OptionMapping arg1 = event.getOption("reminderid");
             int requestedID = arg1.getAsInt();
+
+            //retreive their hashmap
             HashMap<Integer, reminder> innerMap = map.get(user);
+
+            //If the user attempts to remove a command that doesn't exist
             if(!innerMap.containsKey(requestedID)){
                 event.reply("ID doesn't exist").setEphemeral(true).queue();
             }
+
+            //Other wise we will remove the reminder here
+            //Cancel the timer and remove it from the list
+
             Timer timer = innerMap.get(requestedID).timer;
             timer.cancel();
-
-
-
+            //this works too
+            //reminder remind = innerMap.get(requestedID);
+            //remind.cancelTimer();
             String reminder = innerMap.get(requestedID).getReminder();
             innerMap.remove(requestedID);
             event.reply("Removed your reminder for " + reminder ).setEphemeral(true).queue();
@@ -232,12 +226,8 @@ public class commands extends ListenerAdapter {
         //Basically the code here runs when the timer is done
         @Override
         public void run() {
-            //Currently we should keep it simple and just send a message in the chat
-
-            //Once complete the list still has the reminder. We have their hashmap and can get their list so
-            //channel.sendMessage("Here's your reminder for " + reminder).queue(privateChannel -> );
-            //cancelTimer();
-
+            //This is when the timer is up we will send a private message to the user
+            //While this occurs we should remove this reminder since the time is up
             user.openPrivateChannel().queue(privateChannel ->
                     privateChannel.sendMessage("Reminder for " + reminder).queue(message -> {
                         //cancelTimer();
@@ -247,19 +237,10 @@ public class commands extends ListenerAdapter {
 
                     })
                     );
-            //List<reminder> list = map.get(user);
-
-            //this.timer.cancel();
-            //list.remove(this);
-
-
-
-
-
         }
 
         void setTimer(long timeMillis){
-            //Set's the timer
+            //Set's the timer in millis
             scheduledTime = System.currentTimeMillis() + timeMillis; // makes it easier to display remaining time for reminder list
             timer = new Timer();
             timer.schedule(this, timeMillis);
